@@ -14,16 +14,14 @@ class Controller_Pages_Pagegroup extends Controller {
 				$pages[] = $page;
 			}
 		}
-		
 		if (count($pages)) 
 		{
 			$this->request->response = View::factory('pagegroup/'.$this->request->param('layout', 'vertical'))
-				->set('pages', $pages);
+				->set('pages', $pages)->render();
 		}else
 		{
 			$this->request->response = '';
 		}
-		
 	}
 
 } // End Menus_Menu
