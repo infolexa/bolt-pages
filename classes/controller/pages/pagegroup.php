@@ -6,7 +6,7 @@ class Controller_Pages_Pagegroup extends Controller {
 	{
 		$pagegroup = Kohana::config('pages')->get($this->request->param('group'));
 		$pages = array();
-		
+
 		foreach ($pagegroup as $page) 
 		{
 			if (User::belongsto($page['usergroups'])) 
