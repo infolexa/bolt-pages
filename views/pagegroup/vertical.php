@@ -3,8 +3,10 @@
 <?php if (count($pages)): ?>
     
 <ul>
-<?php foreach ($pages as $page): ?>
-    <li><?php echo html::aroute($page['route'], $page['params'], $page['title'], $page['attributes']); ?></li>
+<?php foreach ($pages as $page): 
+		$route = ($page['route'] == 'frontpage') ? '' : $page['route'];
+?>
+    <li><?php echo html::aroute($route, $page['params'], $page['title'], $page['attributes']); ?></li>
 <?php endforeach ?>
 </ul>
 

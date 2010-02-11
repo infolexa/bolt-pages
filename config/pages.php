@@ -4,7 +4,7 @@ return array(
 	'mainmenu'	=> array(
 		array(
 			'title' 		=> 'Welcome',
-			'route'			=> 'default',
+			'route'			=> 'statichtml',
 			'params'		=> array('file' => 'welcome'),
 			'attributes' 	=> array(
 								'class' => 'home'
@@ -13,14 +13,14 @@ return array(
 		),
 		array(
 			'title' 		=> 'Register',
-			'route'			=> 'default',
+			'route'			=> 'statichtml',
 			'params'		=> array('file' => 'register'),
 			'attributes' 	=> array(),
 			'usergroups'	=> '0'
 		),
 		array(
 			'title' 		=> 'About Us',
-			'route'			=> 'default',
+			'route'			=> 'statichtml',
 			'params'		=> array('file' => 'about'),
 			'attributes' 	=> array(
 								'class' => 'login'

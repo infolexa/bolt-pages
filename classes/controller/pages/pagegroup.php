@@ -10,10 +10,11 @@ class Controller_Pages_Pagegroup extends Controller {
 		foreach ($pagegroup as $page) 
 		{
 			if (User::belongsto($page['usergroups'])) 
-			{
+			{                   
 				$pages[] = $page;
 			}
 		}
+
 		if (count($pages)) 
 		{
 			$this->request->response = View::factory('pagegroup/'.$this->request->param('layout', 'vertical'))
