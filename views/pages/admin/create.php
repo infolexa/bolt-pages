@@ -7,12 +7,7 @@
 		<input type="button" name="cancelbutton" value="Cancel" />
 	</div>
 
-	<?php 
-	if (strtolower($group) == 'root'):
-		echo View::factory('pages/admin/creategroup')->set('page', $page)->render();
-	else:
-		echo View::factory('pages/admin/createpage')->set('page', $page)->set('parent', $parent)->set('groups', $groups)->render();
-	endif?>
+	<?php echo $fields?>
 	<div>
 		<input type="submit" name="createbutton" value="Save and Go Back to List" />
 		<input type="button" name="applybutton" value="Apply Changes" />

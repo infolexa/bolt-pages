@@ -1,8 +1,5 @@
 <?php defined('SYSPATH') or die('404 Not Found.');?>
 <div id="pageslist">
-	<div>
-		<?php echo HTML::aroute('pages', array('group' => $group, 'action' => 'create'), 'New Page') ?>
-	</div>
 	
 	<table class="list">
 		<tr>
@@ -24,6 +21,6 @@
 		
 	</table>
 	<div>
-		
+		<?php echo $pagemenu ?>	
 	</div>
 </div>
