@@ -110,33 +110,128 @@ class Controller_Pages_Admin_Pages extends Admin_Controller {
 		$this->$func();
 	}
 	
-	public function create_app()
+	private function create_app()
 	{
+		//get the group name so we'll know the parent of this page
+		$groupname = $this->request->param('group');
+		$group = Sprig::factory('page', array('alias' => $groupname))->load();
+
+		$page = Sprig::factory('page');
+		
+		//get the App
 		$app = Apps::get($this->request->param('id'));
 		if ( ! $app) 
 		{
 			$this->messages('error', 'App does not exist');
 			$this->request->redirect(Apps::aliasof('admin').'/pages/'.$groupname);
 		}
-		
-		$groupname = $this->request->param('group');
-		$url = URL::base(TRUE, 'url').$app->alias;
-		
+
+		//get the first route for the App
 		$route = '';
-		//get the first route for the app
 		foreach (Route::all() as $key => $route) 
 		{
 			if (preg_match('/^site\/'.$app->name.'/', $key)) 
 			{
+				//get the route instance
 				$route = $route->meta('key', $key);
 				break;
 			}
 		}
+		
+		//the first route's reverse Route should generate protocol://domain.com/appalias
+		$url = URL::base(TRUE, 'url').$route->uri(array('controller' => NULL));
+		
+		//get the default form body
+		$formbody = View::factory('pages/admin/pageform')
+			->set('parent', $group)
+			->set('groups', $group->descendants)
+			->set('page', $page)
+			->set('app', $app)
+			->set('url', $url)
+			->render();
+
+		//generate the configuration html
+		$config = $this->create_config('custom', $route);
+		$config .= $this->create_config('meta', $route);
+		$config .= $this->create_config('defaults', $route);
+		
+		//return the complete page
+		$this->request->response = View::factory('pages/admin/create')
+			->set('group', $group->alias)
+			->set('formbody', $formbody)
+			->set('config', $config)
+			->render();
+		return;
 	}
 	
-	public function create_group()
+	private function create_route()
 	{
-		# code...
+		//get the group name so we'll know the parent of this page
+		$groupname = $this->request->param('group');
+		$group = Sprig::factory('page', array('alias' => $groupname))->load();
+
+		$page = Sprig::factory('page');
+		
+		//get the App
+		$route = Route::get($this->request->param('id'))->meta('key', $this->request->param('id'));
+
+		//the bare minimum generated URL
+		$url = URL::base(TRUE, 'url').$route->uri();
+		
+		//get the default form body
+		$formbody = View::factory('pages/admin/pageform')
+			->set('parent', $group)
+			->set('groups', $group->descendants)
+			->set('page', $page)
+			->set('url', $url)
+			->render();
+
+		//generate the configuration html
+		$config = $this->create_config('custom', $route);
+		$config .= $this->create_config('meta', $route);
+		
+		//return the complete page
+		$this->request->response = View::factory('pages/admin/create')
+			->set('group', $group->alias)
+			->set('formbody', $formbody)
+			->set('config', $config)
+			->render();
+		return;
+	}
+	
+	private function create_config($type, $route)
+	{
+		if ( ! ($route instanceof Route)) 
+		{
+			return;
+		}
+		
+		$config = '';
+		switch ($type) 
+		{
+			case 'defaults':
+				$config = View::factory('pages/config/defaults')
+					->set('params', $route->params())
+					->set('defaults', $route->defaults())->render();
+			break;
+			
+			case 'meta':
+				$config = View::factory('pages/config/meta')->render();
+			break;
+			
+			case 'custom':
+				if ($route->meta('config')) 
+				{
+					$token = Route::get('config')->meta('token');
+					foreach ( $route->meta('config') as $config_route) 
+					{
+						$config = Request::factory($token.'/'.$config_route)->execute()->response;
+					}
+				}
+			break;
+		}
+
+		return $config;
 	}
 	
 	public function action_creates()
